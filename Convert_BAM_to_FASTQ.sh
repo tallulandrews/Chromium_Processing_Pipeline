@@ -5,6 +5,7 @@
 #SBATCH --cpus-per-task=2
 #SBATCH -J run_cellranger_count
 
+# This is simply a wrapper around bamtofastq to faciliate submitting it to a cluster or incoporating it into a workflow.
 
 BAM2FASTQ="/home/tandrew6/Downloaded_Software/bamtofastq_linux"
 

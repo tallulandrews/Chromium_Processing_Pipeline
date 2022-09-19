@@ -13,12 +13,10 @@ ID=$1
 FASTQDIR=$2
 N_cells=$3
 CELLRANGER_DIR=$ID"_cellranger"
-VELOCYTO_DIR=$ID"_velocyto"
 N_THREADS=16
 MAX_MEM=60 # in Gb
-GTF="/scratch/tandrew6/Genomes/Human/genocde.v41.annotation.gtf.gz"
+# If you frequently work with different species you may want to make these additional arguments
 CELLRANGER_GENOME="/scratch/tandrew6/Genomes/Human/refdata-gex-GRCh38-2020-A/"
-CELLRANGER_GTF="/scratch/tandrew6/Genomes/Human/refdata-gex-GRCh38-2020-A/genes/genes.gtf"
 
 # Error Catching #
 USAGE="Usage: Run_CellRanger.sh output_id fastQ_dir N_cells\n\n
@@ -74,18 +72,5 @@ command -v cellranger >/dev/null 2>&1 || { echo >&2 -e "I require cellranger ver
 
 # Run cellranger
 cellranger count --id $CELLRANGER_DIR --fastqs $FASTQDIR --transcriptome $CELLRANGER_GENOME --localcores=$N_THREADS --jobmode=local --localmem=$MAX_MEM --include-introns true --expect-cells $N_cells 
-
-
-
-# Load velocyto
-#module load samtools/1.15.1
-#module load python/3.9.6; module load scipy-stack; source $PYTHON_ENV_DIR/sc_velocity/bin/activate
-# check velocyto
-#command -v velocyto >/dev/null 2>&1 || { echo >&2 -e "I require velocyto installed. Please create a python environment and install velocyto as directed here: http://velocyto.org/velocyto.py/install/index.html\n";
-#		exit 1; }
-
-# Run velocyto
-#velocyto --samtools-threads $NTHREADS --samtools-memory $MAX_MEM $CELLRANGER_DIR $CELLRANGER_GTF
-# Delete interim files
 
 

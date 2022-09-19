@@ -5,10 +5,10 @@
 #SBATCH --cpus-per-task=2
 #SBATCH -J extract_splice_unsplice_matrices
 
-echo "Running extract_matrices.sh $1 $2 $3"
+echo "Running extract_matrices.sh $1 $2"
 
 LOOMFILE=$1
-OUTPREFIX=$2
+OUTPREFIX=$2 #Note this should include a trailing "_" for nicely formatted output files.
 
 module load python/3.9.6 hdf5/1.12.1 samtools/1.15.1;  module load scipy-stack; source $PYTHON_ENV_DIR/sc_velocity/bin/activate
 

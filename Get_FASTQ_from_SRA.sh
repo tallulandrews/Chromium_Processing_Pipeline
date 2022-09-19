@@ -7,21 +7,32 @@ source ~/.bashrc
 
 module load StdEnv/2020 gcc/9.3.0; module load sra-toolkit/3.0.0
 
-# Use Pattern Matching to extract all lines corresponding to 1 sample.
+# This script assumes you have created a file with the following columns for 
+# the samples you wish to process:
+# SRA_ID Sample_file_ID
+
+# Use Pattern Matching to extract all lines corresponding to 1 sample. Here Donor2 is a 
+# key phrase in the Sample_file_ID to identify all files from the same sample.
 arr_SRA=($(awk '/Donor2/ {print $1}' MacParland_SC_SN_Spatial_SraAccList.txt))
 arr_PREFIX=($(awk '/Donor2/ {print $2}' MacParland_SC_SN_Spatial_SraAccList.txt))
 
 FASTQDIR="Donor2_fastq"
 mkdir -p $FASTQDIR
 
+# Loop over all SRA ids for this sample
 length=${#arr_SRA[@]}
 for (( j=0; j<${length}; j++ ));
 do
     $SRA=$arr_SRA[j]
     $PREFIX=$arr_PREFIX[j]
+    # Download the files -> fastq-dump can be found inside sra-toolkit
     fastq-dump --split-files --origfmt --gzip --outdir $FASTQDIR $SRA_repo
     cd $FASTQDIR
     pwd | echo
+    # NOTE: You should manually check that this naming convention is correct for your
+    # particular dataset of interest, as SRA is not enforcing specific standards. Also,
+    # only R1 and R2 are required to run cellranger, thus your dataset may only have two
+    # files.
     mv ${SRA}_1.fastq.gz  ${PREFIX}_I1_001.fastq.gz
     mv ${SRA}_2.fastq.gz  ${PREFIX}_R1_001.fastq.gz
     mv ${SRA}_3.fastq.gz  ${PREFIX}_R2_001.fastq.gz
@@ -29,15 +40,3 @@ do
     pwd | echo
 done
 
-# Convert BAM to FASTQ
-# Download FASTQ from SRA
-#fastq-dump --split-files --origfmt --gzip --outdir $FASTQDIR $SRA_repo
-# Convert SRA into FastQs?
-
-# Manually rename files?
-# https://kb.10xgenomics.com/hc/en-us/articles/115003802691-How-do-I-prepare-Sequence-Read-Archive-SRA-data-from-NCBI-for-Cell-Ranger-
-
-
-#mv SRR16227573_1.fastq.gz  C70_Caudate_S4_L001_I1_001.fastq.gz
-#mv SRR16227573_2.fastq.gz  C70_Caudate_S4_L001_R1_001.fastq.gz
-#mv SRR16227573_3.fastq.gz  C70_Caudate_S4_L001_R2_001.fastq.gz
